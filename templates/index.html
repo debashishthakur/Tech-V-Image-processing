@@ -16,7 +16,7 @@
       {% endif %}
       {% endwith %}
     <div class = "container mx-6">
-      <center><h1 class = "fs-2 text py-3"> Edit your image online </h1></center>
+      <center><h1 class = "fs-2 text py-3"> </h1></center>
       
 
 
@@ -31,25 +31,56 @@
             
             
             <div class="form-floating">
-              <select name="operation" class="form-select" id="floatingSelect" aria-label="Floating label select example">
+              <select name="operation" onchange="myFunction(this)" class="form-select" id="floatingSelect" aria-label="Floating label select example">
                 <option selected>Choose an operation</option>
                 <option value="1">Convert to Grayscale</option>
-                <option value="2">Edge Detection</option>
-                <option value="3">Blurr</option>
+                <option value="2" id="edgeSlider" >Edge Detection</option>
+                <option value="3" id="blurSlider">Blurr</option>
                 <option value="4">Background Removal</option>
                 <option value="5">Template Matching</option>
               </select>
               <label for="floatingSelect">Works with selects</label>
+              <div id="SliderOption" class="edgeOptions hidden">
+                <label for="points">Points (between 0 and 200):</label>
+<input type="range" id="points" name="rangeValue" onchange="updateValue()" name="points" min="0" max="200">
+              </div>
             </div>
             <button type="Submit" class="btn btn-success my-3">Submit</button>
             
             
           </form>
-          <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+          <p class="card-text"></p>
         </div>
       </div>
       
     </div>
+    <script>
+      const edgeSlider = document.getElementById("edgeSlider")
+const blurSlider = document.getElementById("blurSlider")
+const sliderBar = document.getElementById("SliderOption")
+
+
+function myFunction(selectElement) {
+  var selectedValue = selectElement.value;
+  if (selectedValue === "2") {
+    sliderBar.classList.remove("hidden")
+  } else if (selectedValue === "3") {
+    sliderBar.classList.remove("hidden")
+  } 
+  else{
+    sliderBar.classList.add("hidden")
+  }
+}
+
+const updateValue = () => {
+  
+var rangeInput = document.getElementById("points");
+
+let value = rangeInput.value
+
+}
+    </script>
+    <!-- <script src="./script.js"></script> -->
   </body>
 </html>
 {% block title %}{% endblock title %} 

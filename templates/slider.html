@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Slider Example</title>
+    <style>
+        #slider {
+            width: 300px;
+        }
+        #sliderValue {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Slider Example</h1>
+    <input type="range" id="slider" min="0" max="100" step="1" value="{{ slider_value }}">
+    <p id="sliderValue">{{ slider_value }}</p>
+    <script>
+        var slider = document.getElementById("slider");
+        var sliderValue = document.getElementById("sliderValue");
+        
+        sliderValue.innerHTML = slider.value;
+        
+        slider.oninput = function() {
+            sliderValue.innerHTML = this.value;
+        }
+    </script>
+</body>
+</html>

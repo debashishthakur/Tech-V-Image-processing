@@ -1,13 +1,27 @@
-from flask import Flask, render_template, request, flash, redirect, url_for
+from flask import Flask, render_template, request, flash, redirect, url_for, session
 from werkzeug.utils import secure_filename
 import os
 import cv2
 import numpy as np
+from authlib.integrations.flask_client import OAuth
 #uploading file to static folder
 UPLOAD_FOLDER = 'uploads'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
 
 app = Flask(__name__)
+
+oauth = OAuth(app)
+google = oauth.register(
+    name = 'google',
+    client_id = '',
+    client_secret = '',
+    access_token_url = 'https://accounts.google.com/o/oauth2/token',
+    access_token_params = None,
+    authorize_url = 'https://accounts.google.com/o/oauth2/auth',
+    authorize_params = None,
+    api_base_url = 'https://www.googleapis.com/oauth2/v1/',
+    client_kwargs = {'scope' : 'openid profile email'},
+)
 app.secret_key = 'super secret key'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
@@ -15,7 +29,10 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+rangeValue = 0
+
 def processImage(filename, operation):
+    global rangeValue
     print(f"the operation is {operation} and filename is {filename}")
     img = cv2.imread(f"uploads/{filename}")
     match operation:
@@ -24,11 +41,12 @@ def processImage(filename, operation):
             cv2.imwrite(f"static/{filename}", imgProcessed)
             return filename
         case "2":
-            imgProcessed = cv2.Canny(img, 50, 150)
+            imgProcessed = cv2.Canny(img, rangeValue, 150)
             cv2.imwrite(f"static/{filename}", imgProcessed)
+            print(rangeValue)
             return filename
         case "3":
-            imgProcessed = cv2.medianBlur(img, 15)
+            imgProcessed = cv2.medianBlur(img, 17)
             cv2.imwrite(f"static/{filename}", imgProcessed)
             return filename
         case "4":
@@ -68,18 +86,43 @@ def processImage(filename, operation):
 def home():
     return render_template('index.html')
 
+@app.route('/login')
+def login():
+    google = oauth.create_client('google')
+    redirect_uri = url_for('authorize', _external=True)
+    return google.authorize_redirect(redirect_uri)
+
+
+@app.route('/authorize')
+def authorize():
+    google = oauth.create_client('google')
+    token = google.authorize_access_token()
+    resp = google.get('userinfo')
+    resp.raise_for_status()
+    user_info = resp.json()
+    # do something with the token and profile
+    return redirect('/')
+
 
 @app.route('/about')
 def about():
     return render_template('about.html')
 
-@app.route('/contact')
+@app.route('/contact', methods=['POST', 'GET'])
 def contact():
     return render_template('contact.html')
+
+@app.route('/slider')
+def slider():
+    return render_template('slider.html', slider_value=50)
 
 @app.route('/signin')
 def signin():
     return render_template('signin.html')
+
+@app.route('/signup')
+def signup():
+    return render_template('signup.html')
 
 @app.route('/history')
 def history():
@@ -87,6 +130,9 @@ def history():
 
 @app.route('/edit', methods=["GET","POST"])
 def edit():
+    global rangeValue
+    rangeValue = int(request.form.get("rangeValue"))
+    # print(rangeValue)
     if request.method == "POST":
         operation = request.form.get("operation")
         if 'file' not in request.files:

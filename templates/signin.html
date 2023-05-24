@@ -1,16 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'base.html' %}
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bootstrap Starter Template</title>
-  <!-- Bootstrap CSS -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css">
-  
-  
-
-</head>
+{% block title %}Login | {% endblock title %} 
+{% block body %}
 <style>
 body {
   background: #004fa4;
@@ -58,7 +49,7 @@ body {
                 </label>
               </div>
               <div class="d-grid">
-                <button class="btn btn-primary btn-login text-uppercase fw-bold" type="submit">Sign
+                <button class="btn btn-primary btn-login text-uppercase fw-bold" href = "/" type="submit">Sign
                   in</button>
               </div>
               <hr class="my-4">
@@ -81,6 +72,4 @@ body {
 
   <!-- Bootstrap JS bundle (includes Popper.js) -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-
-</html>
+  {% endblock body %}
